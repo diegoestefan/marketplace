@@ -58,9 +58,9 @@ const UserForm: React.FC<UserFormProps> = ({ onAdd, onUpdate, userToEdit }) => {
         };
 
         if (userToEdit) {
-            onUpdate(userWithoutId); // Atualiza sem id
+            onUpdate(userWithoutId);
         } else {
-            onAdd(userWithoutId); // Adiciona sem id
+            onAdd(userWithoutId);
         }
 
         reset({

@@ -21,7 +21,7 @@ export const useProducts = () => {
     };
 
     const deleteProduct = async (id: number) => {
-        await deleteProductApi(id); // <- agora está usando a função da API
+        await deleteProductApi(id);
         setProducts((prev) => prev.filter((p) => p.id !== id));
     };
 
