@@ -1,13 +1,13 @@
 import React, { useState } from "react";
+import UserTable from "../components/UserTable";
+import UserForm from "../components/UserForm";
+import { useUsers } from "../hooks/UseUsers";
 import { Button, CircularProgress, Box, Typography, Paper, Divider } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import UserForm from "../components/UserForm";
-import UserTable from "../components/UserTable";
-import { useUsers } from "../hooks/UseUsers";
 import { User } from "../services/UserService";
 
 const UsersPage = () => {
-    const { users, loading, addUser, updateUser, deleteUser } = useUsers();  // Agora inclui deleteUser
+    const { users, loading, addUser, deleteUser, updateUser } = useUsers();
     const [userToEdit, setUserToEdit] = useState<User | null>(null);
     const navigate = useNavigate();
 
@@ -15,20 +15,9 @@ const UsersPage = () => {
         setUserToEdit(user);
     };
 
-    const handleUpdateUser = (updatedUser: Omit<User, "id" | "password">) => {
-        if (userToEdit) {
-            const updatedUserWithId: User = {
-                ...updatedUser,
-                id: userToEdit.id,
-                password: userToEdit.password,
-            };
-            updateUser(updatedUserWithId.id, updatedUserWithId);
-        }
+    const handleUpdateUser = async (updatedUser: User) => {
+        await updateUser(updatedUser.id, updatedUser);
         setUserToEdit(null);
-    };
-
-    const handleAddUser = (newUser: Omit<User, "id">) => {
-        addUser(newUser);
     };
 
     if (loading) {
@@ -46,9 +35,7 @@ const UsersPage = () => {
             </Typography>
 
             <Box mb={3} display="flex" justifyContent="flex-start">
-                <Button variant="outlined" onClick={() => navigate("/")}>
-                    Voltar para Início
-                </Button>
+                <Button variant="outlined" onClick={() => navigate("/")}>Voltar para Início</Button>
             </Box>
 
             <Paper elevation={2} sx={{ p: 3, mb: 4, backgroundColor: "#f9f9f9" }}>
@@ -57,7 +44,7 @@ const UsersPage = () => {
                 </Typography>
                 <Divider sx={{ mb: 2 }} />
                 <UserForm
-                    onAdd={handleAddUser}
+                    onAdd={addUser}
                     onUpdate={handleUpdateUser}
                     userToEdit={userToEdit}
                 />
@@ -70,8 +57,8 @@ const UsersPage = () => {
                 <Divider sx={{ mb: 2 }} />
                 <UserTable
                     users={users}
-                    onEdit={handleEdit}
                     onDelete={deleteUser}
+                    onUpdate={handleEdit}
                 />
             </Paper>
         </Box>

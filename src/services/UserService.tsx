@@ -17,11 +17,6 @@ export const createUser = async (newUser: Omit<User, "id">): Promise<User> => {
     return response.data;
 };
 
-export const updateUser = async (id: number, updatedUser: Omit<User, "id">): Promise<User> => {
-    const response = await api.put<User>(`/users/${id}`, updatedUser);
-    return response.data;
-};
-
 export const deleteUser = async (id: number): Promise<void> => {
     await api.delete(`/users/${id}`);
 };

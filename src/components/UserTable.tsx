@@ -4,18 +4,18 @@ import { User } from "../services/UserService";
 
 interface UserTableProps {
     users: User[];
-    onEdit: (user: User) => void;
-    onDelete: (id: number) => void;
+    onDelete: (id: number) => Promise<void>;
+    onUpdate: (user: User) => void;
 }
 
-const UserTable: React.FC<UserTableProps> = ({ users, onEdit, onDelete }) => {
+const UserTable: React.FC<UserTableProps> = ({ users, onDelete, onUpdate }) => {
     return (
         <TableContainer>
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell>Nome</TableCell>
-                        <TableCell>Email</TableCell>
+                        <TableCell>Nome de Usuário</TableCell>
+                        <TableCell>E-mail</TableCell>
                         <TableCell>Ações</TableCell>
                     </TableRow>
                 </TableHead>
@@ -25,7 +25,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, onEdit, onDelete }) => {
                             <TableCell>{user.username}</TableCell>
                             <TableCell>{user.email}</TableCell>
                             <TableCell>
-                                <Button onClick={() => onEdit(user)}>Editar</Button>
+                                <Button onClick={() => onUpdate(user)}>Editar</Button>
                                 <Button onClick={() => onDelete(user.id)}>Deletar</Button>
                             </TableCell>
                         </TableRow>

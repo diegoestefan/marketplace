@@ -1,85 +1,50 @@
 import React, { useEffect } from "react";
 import { TextField, Button } from "@mui/material";
+import { User } from "../services/UserService";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { User } from "../services/UserService";
-
-const schema = yup.object().shape({
-    email: yup
-        .string()
-        .email("E-mail inválido")
-        .required("O e-mail é obrigatório"),
-    username: yup.string().required("O nome de usuário é obrigatório"),
-    password: yup.string().required("A senha é obrigatória"),
-});
 
 interface UserFormProps {
-    onAdd: (newUser: { email: string; username: string; password: string }) => void;
-    onUpdate: (user: { email: string; username: string; password: string }) => void;
+    onAdd: (newUser: Omit<User, "id">) => void;
+    onUpdate: (user: User) => void;
     userToEdit: User | null;
 }
 
+const schema = yup.object().shape({
+    username: yup.string().required("O nome de usuário é obrigatório"),
+    email: yup.string().email("O e-mail deve ser válido").required("O e-mail é obrigatório"),
+    password: yup.string().required("A senha é obrigatória"),
+});
+
 const UserForm: React.FC<UserFormProps> = ({ onAdd, onUpdate, userToEdit }) => {
-    const {
-        register,
-        handleSubmit,
-        reset,
-        setValue,
-        formState: { errors },
-    } = useForm({
+    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
-        defaultValues: {
-            email: "",
-            username: "",
-            password: "",
-        },
+        defaultValues: { username: "", email: "", password: "" }
     });
 
     useEffect(() => {
         if (userToEdit) {
-            setValue("email", userToEdit.email);
             setValue("username", userToEdit.username);
+            setValue("email", userToEdit.email);
             setValue("password", userToEdit.password);
         } else {
-            reset({
-                email: "",
-                username: "",
-                password: "",
-            });
+            reset({ username: "", email: "", password: "" });
         }
     }, [userToEdit, reset, setValue]);
 
-    const onSubmit = (data: { email: string; username: string; password: string }) => {
-        const userWithoutId = {
-            email: data.email,
-            username: data.username,
-            password: data.password,
-        };
-
+    const onSubmit = (data: { username: string; email: string; password: string }) => {
         if (userToEdit) {
-            onUpdate(userWithoutId);
+            onUpdate({ ...userToEdit, ...data });
         } else {
-            onAdd(userWithoutId);
+            onAdd(data);
         }
 
-        reset({
-            email: "",
-            username: "",
-            password: "",
-        });
+        reset({ username: "", email: "", password: "" });
     };
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
-            <TextField
-                label="Email"
-                fullWidth
-                margin="normal"
-                {...register("email")}
-                error={!!errors.email}
-                helperText={errors.email?.message}
-            />
             <TextField
                 label="Nome de Usuário"
                 fullWidth
@@ -87,6 +52,15 @@ const UserForm: React.FC<UserFormProps> = ({ onAdd, onUpdate, userToEdit }) => {
                 {...register("username")}
                 error={!!errors.username}
                 helperText={errors.username?.message}
+            />
+            <TextField
+                label="E-mail"
+                type="email"
+                fullWidth
+                margin="normal"
+                {...register("email")}
+                error={!!errors.email}
+                helperText={errors.email?.message}
             />
             <TextField
                 label="Senha"
