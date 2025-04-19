@@ -17,3 +17,6 @@ Este projeto é uma aplicação web desenvolvida com React, TypeScript e Materia
 - Material UI  
 - Axios  
 - React Router DOM  
+
+API utilizada
+Fake Store API – https://fakestoreapi.com
